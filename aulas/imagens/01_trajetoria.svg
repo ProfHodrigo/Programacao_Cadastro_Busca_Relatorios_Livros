@@ -1,0 +1,39 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 270" role="img" aria-labelledby="title desc">
+  <title id="title">Trajetória da disciplina</title>
+  <desc id="desc">Oito aulas para desenvolver a Biblioteca Virtual, seguidas da apresentação do projeto e da prova.</desc>
+  <rect width="1000" height="270" rx="22" fill="#f4f7fb"/>
+  <text x="40" y="47" fill="#172b4d" font-family="Arial, sans-serif" font-size="25" font-weight="700">Uma biblioteca, construída passo a passo</text>
+  <text x="40" y="76" fill="#52657e" font-family="Arial, sans-serif" font-size="15">Cada encontro acrescenta uma parte ao projeto final.</text>
+  <path d="M92 143 H907" stroke="#b9c8da" stroke-width="5" stroke-linecap="round"/>
+  <g font-family="Arial, sans-serif" text-anchor="middle">
+    <g fill="#1769aa">
+      <circle cx="92" cy="143" r="22"/><circle cx="183" cy="143" r="22"/>
+      <circle cx="274" cy="143" r="22"/><circle cx="365" cy="143" r="22"/>
+      <circle cx="456" cy="143" r="22"/><circle cx="547" cy="143" r="22"/>
+      <circle cx="638" cy="143" r="22"/><circle cx="729" cy="143" r="22"/>
+    </g>
+    <g fill="#fff" font-size="15" font-weight="700">
+      <text x="92" y="149">1</text><text x="183" y="149">2</text>
+      <text x="274" y="149">3</text><text x="365" y="149">4</text>
+      <text x="456" y="149">5</text><text x="547" y="149">6</text>
+      <text x="638" y="149">7</text><text x="729" y="149">8</text>
+    </g>
+    <circle cx="820" cy="143" r="24" fill="#16836b"/>
+    <text x="820" y="149" fill="#fff" font-size="15" font-weight="700">9</text>
+    <circle cx="911" cy="143" r="24" fill="#c45b36"/>
+    <text x="911" y="149" fill="#fff" font-size="15" font-weight="700">10</text>
+    <g fill="#263b56" font-size="12">
+      <text x="92" y="185">Ambiente</text><text x="183" y="185">Python</text>
+      <text x="274" y="185">Flask</text><text x="365" y="185">SQLite</text>
+      <text x="456" y="185">CRUD</text><text x="547" y="185">Busca</text>
+      <text x="638" y="185">PDF</text><text x="729" y="185">Relatórios</text>
+      <text x="820" y="185">Projeto</text><text x="911" y="185">Prova</text>
+    </g>
+  </g>
+  <rect x="40" y="216" width="16" height="16" rx="8" fill="#1769aa"/>
+  <text x="64" y="229" fill="#52657e" font-family="Arial, sans-serif" font-size="13">Desenvolvimento</text>
+  <rect x="202" y="216" width="16" height="16" rx="8" fill="#16836b"/>
+  <text x="226" y="229" fill="#52657e" font-family="Arial, sans-serif" font-size="13">Apresentação</text>
+  <rect x="350" y="216" width="16" height="16" rx="8" fill="#c45b36"/>
+  <text x="374" y="229" fill="#52657e" font-family="Arial, sans-serif" font-size="13">Avaliação</text>
+</svg>
