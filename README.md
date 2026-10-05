@@ -49,8 +49,6 @@ Programacao_Cadastro_Busca_Relatorios_Livros/
 │   └── 08_relatorios_integracao.md
 ├── projeto-final/
 │   ├── README.md
-│   └── checklist.md
-└── avaliacao/
-    ├── 10_prova.md
-    └── gabarito_professor.md
+└── └── checklist.md
+
 ```
