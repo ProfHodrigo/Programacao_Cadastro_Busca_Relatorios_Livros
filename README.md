@@ -49,16 +49,6 @@ Programacao_Cadastro_Busca_Relatorios_Livros/
 │   └── 08_relatorios_integracao.md
 ├── projeto-final/
 │   ├── README.md
-│   └── checklist.md
-└── avaliacao/
-    ├── 10_prova.md
-    └── gabarito_professor.md
+└── └── checklist.md
+
 ```
-
-## Princípio pedagógico
-
-O projeto cresce a cada aula. Em vez de estudar conceitos isoladamente e só depois tentar uni-los, cada conteúdo acrescenta uma funcionalidade concreta à Biblioteca Virtual. Ao final da Aula 8, o aluno deverá possuir uma aplicação pequena, porém funcional, com CRUD, buscas, filtros, PDFs e relatórios tabulares.
-
-## Observação ao professor
-
-O conteúdo pressupõe alunos iniciantes. Por isso, bibliotecas e conceitos que aumentariam muito a carga cognitiva — autenticação, API REST separada, React, Docker, ORM e deploy em nuvem — ficaram fora do núcleo obrigatório. Eles podem ser apresentados como extensões em turmas mais avançadas.
