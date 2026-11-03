@@ -1,6 +1,6 @@
 # Aula 3 — Flask: rotas, templates e formulários
 
-**Data:** 29/10/2026  
+**Data:** 03/11/2026  
 **Programas/pacotes utilizados:** Python 3, Flask, Visual Studio Code, navegador e Git.
 
 ## Objetivos
@@ -16,6 +16,10 @@
 ---
 
 ## 1. Como uma aplicação Flask funciona?
+
+Vamos abrir a Biblioteca Virtual no navegador e identificar quem solicita a página e quem devolve a resposta. Depois, comparamos com o catálogo que executamos no terminal na Aula 2.
+
+![Retome o catálogo da Aula 2](imagens/01_inicio.png)
 
 Quando acessamos:
 
@@ -33,6 +37,8 @@ Navegador <- HTML         <- Flask <- resultado
 ---
 
 ## 2. Rotas
+
+Vamos acessar /livros e identificar qual função atende esse endereço. Depois, acessamos /inexistente para observar a resposta 404 de um caminho sem rota.
 
 Em `app.py`:
 
@@ -59,7 +65,9 @@ Cada `@app.route(...)` associa um endereço a uma função.
 
 ## 3. Templates
 
-Crie:
+Vamos comparar o cabeçalho das três páginas. Ele vem de base.html. Em index.html, localizamos extends e os blocos preenchidos pela página inicial.
+
+Vamos criar esta estrutura:
 
 ```text
 templates/
@@ -112,6 +120,10 @@ templates/
 
 ## 4. Enviando dados do Python ao HTML
 
+Retomamos a lista de dicionários da Aula 2. Cada iteração do for em Jinja produz uma linha da tabela.
+
+![Retomamos a lista de dicionários da Aula 2](imagens/02_lista.png)
+
 Temporariamente, usaremos uma lista em memória:
 
 ```python
@@ -158,7 +170,9 @@ def listar_livros():
 
 ## 5. GET e POST
 
-Nesta disciplina, pense assim:
+Antes de testarmos, vamos prever qual método o navegador usa ao clicar em Novo livro e em Salvar. Depois do envio, observamos que o navegador carrega a listagem com outro GET.
+
+Nesta disciplina, usamos os métodos assim:
 
 - **GET:** pedir uma página ou consultar dados;
 - **POST:** enviar dados para criar ou alterar algo.
@@ -173,6 +187,10 @@ POST /livros/cadastrar -> envia o formulário
 ---
 
 ## 6. Formulário de cadastro
+
+No formulário, comparamos name="titulo" no HTML com request.form["titulo"] no Python. O nome liga os dois lados. A atividade acrescenta editora e descrição aos campos do exemplo.
+
+![No formulário, comparamos name="titulo" no HTML e request](imagens/03_formulario.png)
 
 `cadastrar.html`:
 
@@ -212,6 +230,8 @@ POST /livros/cadastrar -> envia o formulário
 
 ## 7. Recebendo o formulário
 
+Abrimos o formulário para testar o GET. Depois, preenchemos os campos, clicamos em Salvar e acompanhamos o retorno à listagem.
+
 ```python
 from flask import Flask, render_template, request, redirect
 
@@ -236,7 +256,9 @@ Nesta aula os dados podem ser apenas impressos ou acrescentados à lista. Na pr�
 
 ## 8. `url_for`
 
-Evite espalhar endereços escritos manualmente.
+Vamos comparar o caminho /livros com o nome listar_livros. Qual dos dois passamos para url_for?
+
+Usamos `url_for` para evitar espalhar endereços escritos manualmente.
 
 ```python
 from flask import url_for
@@ -254,6 +276,10 @@ O nome usado em `url_for` corresponde ao nome da função da rota.
 
 ## 9. Validação simples no servidor
 
+Vamos testar um título com três espaços. O campo tem caracteres, mas strip() remove os espaços e a aplicação responde com 400.
+
+![Teste um título com três espaços](imagens/05_validacao.png)
+
 ```python
 titulo = request.form["titulo"].strip()
 autor = request.form["autor"].strip()
@@ -266,9 +292,11 @@ O atributo HTML `required` ajuda o usuário, mas não substitui a validação no
 
 ---
 
-## 10. Atividade guiada
+## 10. Atividade de classe 01
 
-Construa as páginas:
+Na prática, fazemos as rotas responderem, compartilhamos o layout, montamos a tabela e ligamos os seis campos ao POST.
+
+Vamos construir as páginas:
 
 ```text
 /
@@ -294,15 +322,21 @@ O formulário deverá ter:
 
 ---
 
-## 11. Desafio
+## 11. Atividade de classe 02
 
-Após receber um `POST`, adicione o livro à lista em memória e redirecione para `/livros`.
+Cadastramos A Hora da Estrela e conferimos a nova linha. Ao reiniciar o servidor, os três registros iniciais voltam porque estão escritos no código. O cadastro novo desaparece.
 
-Observe a limitação: ao reiniciar o servidor, todos os dados desaparecem. Isso é exatamente o problema que resolveremos na Aula 4.
+![Cadastre A Hora da Estrela e confira a nova linha](imagens/04_cadastrado.png)
+
+Após receber um `POST`, adicionamos o livro à lista em memória e redirecionamos para `/livros`.
+
+Ao reiniciarmos o servidor, perdemos os novos cadastros. Vamos resolver essa limitação na Aula 4.
 
 ---
 
 ## 12. Commit
+
+Executamos os comandos de Git no repositório da Biblioteca Virtual.
 
 ```bat
 git add .
@@ -313,7 +347,7 @@ git commit -m "Aula 3 - rotas templates e formularios"
 
 ## Revisão
 
-O aluno deverá saber responder:
+Assuntos que podem cair na prova:
 
 - o que é uma rota;
 - o que faz `render_template`;
