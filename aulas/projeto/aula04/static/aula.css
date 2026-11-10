@@ -1,0 +1,15 @@
+/* Estilos mínimos para a demonstração offline. */
+* { box-sizing: border-box; }
+body { margin: 0; background: #f8fafc; color: #172b4d; font: 20px/1.4 Arial, sans-serif; }
+.container { width: min(90%, 1030px); margin-inline: auto; }
+.navbar { background: #142b48; padding: 16px 0; }
+.navbar-brand { color: white; text-decoration: none; font-size: 24px; }
+h1 { font-size: 42px; margin: 18px 0; }
+.mb-3 { margin-bottom: 10px; }
+.form-label { display: block; margin-bottom: 4px; font-weight: bold; }
+.form-control { display: block; width: 100%; border: 1px solid #76869a; border-radius: 5px; padding: 6px 12px; font: inherit; }
+.btn { display: inline-block; border: 0; border-radius: 5px; padding: 8px 16px; color: white; background: #1769aa; text-decoration: none; font: inherit; cursor: pointer; }
+.btn-success { background: #146c55; }
+.table { width: 100%; border-collapse: collapse; }
+.table th, .table td { padding: 12px 18px; text-align: left; border-bottom: 1px solid #c8d4e2; }
+.table-striped tbody tr:nth-child(odd) { background: #e7f1fb; }

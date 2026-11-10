@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block conteudo %}
+<h1>Livros</h1>
+<a class="btn btn-primary mb-3" href="{{ url_for('cadastrar_livro') }}">Novo livro</a>
+<div style="overflow-x: auto">
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>ID</th><th>Título</th><th>Autor</th><th>Ano</th>
+                <th>Categoria</th><th>Editora</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for livro in livros %}
+            <tr>
+                <td>{{ livro.id }}</td>
+                <td>{{ livro.titulo }}</td>
+                <td>{{ livro.autor }}</td>
+                <td>{{ livro.ano if livro.ano is not none else "-" }}</td>
+                <td>{{ livro.categoria or "-" }}</td>
+                <td>{{ livro.editora or "-" }}</td>
+            </tr>
+            {% else %}
+            <tr><td colspan="6">Nenhum livro cadastrado. Vamos começar em Novo livro.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
