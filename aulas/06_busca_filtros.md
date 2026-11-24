@@ -1,286 +1,134 @@
-# Aula 6 — Busca e filtros
+# Aula 6: exercícios guiados de busca e filtros
 
-**Data:** 19/11/2026  
-**Programas/pacotes utilizados:** Python 3, Flask, SQLite, Visual Studio Code, navegador e Git.
+**Data:** 24/11/2026
 
-## Objetivos
-
-- receber parâmetros pela URL;
-- compreender query strings;
-- utilizar `WHERE`, `LIKE`, `AND` e `ORDER BY`;
-- construir SQL dinamicamente sem concatenar valores do usuário;
-- pesquisar por título;
-- filtrar por autor, ano e categoria;
-- combinar filtros.
+Continuaremos após o que concluímos na Aula 5, ao lado de `app.py`, com o mesmo `database/biblioteca.db`. Com o ambiente virtual ativo, executamos `python app.py` e abrimos `http://127.0.0.1:5000/livros`. Lembrem que depois de editar o código ou os templates de cada exercício, tem que encerrar o servidor com `Ctrl+C`, executar de novo `python app.py` e atualizar a página.
 
 ---
 
-## 1. O que é uma busca?
+## 1. Preparar livros para comparar
 
-Listar todos os livros é diferente de selecionar apenas os registros que atendem a certos critérios.
+Antes de alterar o código, abrimos os **Detalhes** de um livro da Aula 5 e anotamos seu ID. Se começamos com o banco vazio, fazemos essa conferência após o primeiro cadastro. Em **Novo livro**, cadastramos os títulos da tabela que ainda faltam. Conservamos os livros anteriores. As contagens das imagens consideram apenas os dez exemplos. Se outros livros também atenderem ao filtro, somamos essas linhas ao resultado esperado.
 
-Exemplos:
+| Título | Autor | Ano | Categoria |
+|---|---|---:|---|
+| Horta na varanda | Lia Reis | 2024 | Natureza |
+| Guia da horta | Rui Luz | 2022 | Natureza |
+| Aves do bairro | Lia Reis | 2024 | Natureza |
+| Mapa das trilhas | Bia Melo | 2020 | Viagem |
+| Diário de bordo | Rui Luz | 2021 | Viagem |
+| Rotas de trem | Bia Melo | 2023 | Viagem |
+| Sabores da feira | Lia Reis | 2022 | Cozinha |
+| Pães de domingo | Rui Luz | 2024 | Cozinha |
+| Receitas de verão | Bia Melo | 2023 | Cozinha |
+| Trilhas da serra | Bia Melo | 2020 | Viagem |
 
-```text
-Título contém: Python
-Autor: Machado de Assis
-Ano: 2020
-Categoria: Tecnologia
-```
-
-No navegador, uma busca pode aparecer assim:
-
-```text
-/livros?busca=python&ano=2020
-```
-
-A parte após `?` é chamada de **query string**.
+**Conferimos:** localizamos os dois títulos com a palavra “horta”. Anotamos o autor e o ano de cada um.
 
 ---
 
-## 2. Lendo parâmetros GET
+## 2. Buscar uma palavra na URL
 
-```python
+Em `app.py`, dentro de `listar_livros()`, antes de abrir a conexão, acrescentamos o trecho abaixo. Alinhamos a primeira linha com `conexao = conectar()`. No bloco seguinte, alinhamos a consulta com a linha que substituímos dentro do `try`. Em `/livros?busca=horta`, o trecho após `?` é a *query string*. Com `request.args`, lemos o valor associado a `busca`.
+
+~~~python
 busca = request.args.get("busca", "").strip()
-autor = request.args.get("autor", "").strip()
-ano = request.args.get("ano", "").strip()
-categoria = request.args.get("categoria", "").strip()
-```
-
-O segundo argumento de `get` é o valor padrão.
-
----
-
-## 3. `LIKE`
-
-SQL:
-
-```sql
-SELECT *
-FROM livros
-WHERE titulo LIKE '%Python%';
-```
-
-O `%` representa qualquer sequência de caracteres.
-
-Com parâmetro Python:
-
-```python
-conexao.execute(
-    "SELECT * FROM livros WHERE titulo LIKE ?",
-    (f"%{busca}%",)
-)
-```
-
----
-
-## 4. Busca por título ou autor
-
-```sql
-SELECT *
-FROM livros
-WHERE titulo LIKE ? OR autor LIKE ?;
-```
-
-```python
-termo = f"%{busca}%"
-
-livros = conexao.execute(
-    """
-    SELECT * FROM livros
-    WHERE titulo LIKE ? OR autor LIKE ?
-    ORDER BY titulo
-    """,
-    (termo, termo)
-).fetchall()
-```
-
----
-
-## 5. Filtros combinados
-
-Precisamos montar condições de acordo com o que o usuário preencheu.
-
-```python
 sql = "SELECT * FROM livros WHERE 1=1"
 parametros = []
-
 if busca:
     sql += " AND (titulo LIKE ? OR autor LIKE ?)"
     termo = f"%{busca}%"
     parametros.extend([termo, termo])
+sql += " ORDER BY titulo"
+~~~
 
+Dentro do `try`, substituímos a consulta que preenchia `livros` por esta linha. Mantemos o fechamento da conexão e o retorno do template.
+
+~~~python
+livros = conexao.execute(sql, parametros).fetchall()
+~~~
+
+O sinal `%` aceita qualquer sequência antes ou depois da palavra. Os dois `?` recebem o mesmo termo, um para o título e outro para o autor. Ao passar os valores em separado, podemos pesquisar inclusive palavras com apóstrofo.
+
+**Conferimos:** abrimos `/livros?busca=horta` e encontramos os dois títulos anotados. Trocamos `horta` por `Lia` e encontramos os livros da autora.
+
+---
+
+## 3. Combinar dois critérios
+
+Antes de `sql += " ORDER BY titulo"`, acrescentamos os filtros abaixo. Partimos de `WHERE 1=1`, uma condição sempre verdadeira. Cada `AND` acrescenta uma exigência. Os parênteses na busca anterior fazem o filtro de ano valer tanto para título quanto para autor.
+
+~~~python
+autor = request.args.get("autor", "").strip()
+ano = request.args.get("ano", "").strip()
+categoria = request.args.get("categoria", "").strip()
 if autor:
     sql += " AND autor = ?"
     parametros.append(autor)
-
 if ano:
     sql += " AND ano = ?"
-    parametros.append(int(ano))
-
+    parametros.append(ano)
 if categoria:
     sql += " AND categoria = ?"
     parametros.append(categoria)
+~~~
 
-sql += " ORDER BY titulo"
-
-livros = conexao.execute(sql, parametros).fetchall()
-```
-
-### Por que `WHERE 1=1`?
-
-A condição sempre é verdadeira. Ela simplifica a montagem didática das condições seguintes, pois todas podem começar com `AND`.
+**Conferimos:** abrimos `/livros?busca=horta&ano=2024`. O sinal `&` separa os parâmetros. Dos dois títulos, fica apenas *Horta na varanda*. Em `/livros?autor=Lia%20Reis`, encontramos os três livros de Lia.
 
 ---
 
-## 6. Por que não concatenar o texto do usuário?
+## 4. Escolher os filtros na tela
 
-Evite:
+Na mesma rota, dentro do `try`, logo depois de buscar os livros, consultamos as categorias do acervo. Com `DISTINCT`, cada categoria aparece uma vez, mesmo que vários livros a utilizem.
 
-```python
-sql = "SELECT * FROM livros WHERE titulo = '" + busca + "'"
-```
-
-Prefira:
-
-```python
-sql = "SELECT * FROM livros WHERE titulo = ?"
-parametros = [busca]
-```
-
-Além de evitar problemas com aspas, parâmetros são uma proteção importante contra injeção de SQL.
-
----
-
-## 7. Formulário GET de pesquisa
-
-No topo de `livros.html`:
-
-```html
-<form method="get" class="row g-2 mb-4">
-    <div class="col-md-4">
-        <input class="form-control"
-               name="busca"
-               placeholder="Título ou autor"
-               value="{{ request.args.get('busca', '') }}">
-    </div>
-
-    <div class="col-md-2">
-        <input class="form-control"
-               type="number"
-               name="ano"
-               placeholder="Ano"
-               value="{{ request.args.get('ano', '') }}">
-    </div>
-
-    <div class="col-md-3">
-        <input class="form-control"
-               name="categoria"
-               placeholder="Categoria"
-               value="{{ request.args.get('categoria', '') }}">
-    </div>
-
-    <div class="col-md-3">
-        <button class="btn btn-primary">Filtrar</button>
-        <a class="btn btn-secondary" href="{{ url_for('listar_livros') }}">Limpar</a>
-    </div>
-</form>
-```
-
-Como o método é GET, os filtros aparecem na URL. Isso é adequado para consultas.
-
----
-
-## 8. Filtro por opções existentes
-
-Em vez de digitar a categoria, podemos obter as categorias existentes:
-
-```python
-categorias = conexao.execute(
-    """
-    SELECT DISTINCT categoria
-    FROM livros
+~~~python
+categorias = conexao.execute("""
+    SELECT DISTINCT categoria FROM livros
     WHERE categoria IS NOT NULL AND categoria <> ''
     ORDER BY categoria
-    """
-).fetchall()
-```
+""").fetchall()
+~~~
 
-HTML:
+Na chamada a `render_template`, acrescentamos `categorias=categorias` depois de `livros=livros`. Em `templates/livros.html`, antes da tabela, incluímos o formulário. O método GET coloca os campos na URL. Com `value` e `selected`, conservamos as escolhas ao mostrar o resultado.
 
-```html
-<select name="categoria" class="form-select">
-    <option value="">Todas as categorias</option>
-    {% for item in categorias %}
-        <option value="{{ item.categoria }}">
-            {{ item.categoria }}
-        </option>
-    {% endfor %}
-</select>
-```
+~~~html
+<form method="get" class="mb-3">
+    <label>Título ou autor <input name="busca" value="{{ request.args.get('busca', '') }}"></label>
+    <label>Autor exato <input name="autor" value="{{ request.args.get('autor', '') }}"></label>
+    <label>Ano <input type="number" name="ano" value="{{ request.args.get('ano', '') }}"></label>
+    <label>Categoria
+        <select name="categoria">
+            <option value="">Todas</option>
+            {% for item in categorias %}
+            <option {% if request.args.get('categoria') == item.categoria %}selected{% endif %}>{{ item.categoria }}</option>
+            {% endfor %}
+        </select>
+    </label>
+    <button class="btn" type="submit">Filtrar</button>
+    <a href="{{ url_for('listar_livros') }}">Limpar</a>
+</form>
+~~~
 
-`DISTINCT` remove repetições.
-
----
-
-## 9. Mensagem para zero resultados
-
-```html
-{% if livros %}
-    <!-- tabela -->
-{% else %}
-    <div class="alert alert-info">
-        Nenhum livro encontrado com os filtros informados.
-    </div>
-{% endif %}
-```
+**Conferimos:** selecionamos **Natureza**, pesquisamos *horta* e clicamos em **Filtrar**. Vemos dois livros. Ao clicar em **Limpar**, recuperamos a lista completa.
 
 ---
 
-## 10. Contando resultados da busca
+## 5. Contar os resultados e testar a lista vazia
 
-No template:
+Logo depois do formulário, acrescentamos a contagem das linhas retornadas.
 
-```html
-<p>{{ livros|length }} resultado(s) encontrado(s).</p>
-```
+~~~html
+<p>Resultados encontrados: {{ livros|length }}</p>
+~~~
 
-Isso não substitui os relatórios gerais da Aula 8; apenas informa quantos registros a busca atual retornou.
+Dentro da célula com `colspan="7"`, substituímos a mensagem antiga pela expressão abaixo. Quando a tabela fica vazia, identificamos se chegamos ali após enviar o formulário.
 
----
+~~~html
+{{ "Nenhum livro encontrado com esses filtros." if request.args else "Nenhum livro cadastrado." }}
+~~~
 
-## 11. Atividade da aula
+**Conferimos:** buscamos *horta* e escolhemos o ano 2024. Lemos a contagem e conferimos o título. Depois trocamos o ano para 2023. Entre os exemplos, a contagem passa a zero. Se houver outro livro que atenda aos filtros, pesquisamos um título ausente do nosso acervo para ver a mensagem. Ao limpar os filtros, os cadastros continuam lá.
 
-A tela de livros deverá permitir:
+![Busca por horta em 2024 com um único livro na lista](imagens/01-combinacao.png)
 
-- busca parcial por título;
-- busca parcial por autor;
-- filtro de ano;
-- filtro de categoria;
-- combinação entre filtros;
-- limpar filtros;
-- informar quando nenhum livro for encontrado.
-
-### Cenário de teste
-
-Cadastre pelo menos 10 registros com:
-
-- três autores diferentes;
-- três categorias diferentes;
-- pelo menos cinco anos diferentes.
-
-Depois teste combinações como:
-
-```text
-categoria = Tecnologia
-ano = 2024
-```
-
----
-
-## 12. Commit
-
-```bat
-git add .
-git commit -m "Aula 6 - busca e filtros"
-```
+![A mesma busca em 2023 com contagem zero e mensagem na tabela](imagens/02-sem-resultados.png)
